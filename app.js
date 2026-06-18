@@ -16,110 +16,184 @@ const firebaseConfig = {
 // --- STEP 2: APP LOGIC ---
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-const pointsRef = database.ref('tomPoints');
 
-// Rules Definitions
+firebase.initializeApp(firebaseConfig);
+
+const database = firebase.database();
+const pointsRef = database.ref("tomPoints");
+
 const POINT_MODIFIERS = {
     gold: 10,
     red: -10
 };
 
-// UI Elements
-const currentPointsDisplay = document.getElementById('currentPoints');
-const goldCountDisplay = document.getElementById('goldCount');
-const redCountDisplay = document.getElementById('redCount');
-const addGoldBtn = document.getElementById('addGold');
-const addRedBtn = document.getElementById('addRed');
-const rewardsList = document.getElementById('rewardsList');
+const currentPointsDisplay = document.getElementById("currentPoints");
+const goldCountDisplay = document.getElementById("goldCount");
+const redCountDisplay = document.getElementById("redCount");
+const visualStarChart = document.getElementById("visualStarChart");
 
-// System State
+const addGoldButton = document.getElementById("addGold");
+const addRedButton = document.getElementById("addRed");
+const refreshButton = document.getElementById("refreshBtn");
+const masterResetButton = document.getElementById("masterResetBtn");
+
 let localPointsState = {
     totalPoints: 0,
     goldStars: 0,
     redStars: 0
 };
 
-// --- INITIAL LOAD ---
-
-// Local fetch and fallback if needed
-const cachedPoints = JSON.parse(localStorage.getItem('tomSystemState'));
-if (cachedPoints) {
-    localPointsState = cachedPoints;
-    updateUI(localPointsState);
-}
-
-// 1. Sync Data (Listeners - Updates instantly when You or Tom edits)
-pointsRef.on('value', (snapshot) => {
+pointsRef.on("value", (snapshot) => {
     const data = snapshot.val();
+
     if (data) {
-        localPointsState = data;
+        localPointsState = {
+            totalPoints: data.totalPoints || 0,
+            goldStars: data.goldStars || 0,
+            redStars: data.redStars || 0
+        };
+
         updateUI(localPointsState);
-        localStorage.setItem('tomSystemState', JSON.stringify(localPointsState));
     } else {
-        // First-time setup, seed the DB
         pointsRef.set(localPointsState);
     }
 });
 
-// --- INTERACTIONS (Actions) ---
-
-// Award Gold Star
-addGoldBtn.addEventListener('click', () => {
-    modifyPoints('gold');
+addGoldButton.addEventListener("click", () => {
+    modifyPoints("gold");
 });
 
-// Assign Red Star
-addRedBtn.addEventListener('click', () => {
-    modifyPoints('red');
+addRedButton.addEventListener("click", () => {
+    modifyPoints("red");
 });
 
-// Helper: Modify Points System
-function modifyPoints(type) {
-    const change = POINT_MODIFIERS[type];
-    const newState = {
-        totalPoints: localPointsState.totalPoints + change,
-        goldStars: localPointsState.goldStars + (type === 'gold' ? 1 : 0),
-        redStars: localPointsState.redStars + (type === 'red' ? 1 : 0)
-    };
-    
-    // Save to Firebase (updates local UI automatically via listener)
-    pointsRef.update(newState);
-}
+refreshButton.addEventListener("click", () => {
+    location.reload();
+});
 
-// Helper: Update UI
-function updateUI(state) {
-    // 1. Core Points
-    currentPointsDisplay.innerText = state.totalPoints;
-    
-    // 2. Stars
-    goldCountDisplay.innerText = state.goldStars;
-    redCountDisplay.innerText = state.redStars;
+masterResetButton.addEventListener("click", () => {
+    const firstConfirm = confirm(
+        "Master Reset: this will clear Tom's points, gold stars, red stars, and formal compliance history. Continue?"
+    );
 
-    // 3. Rewards Progress (Dynamic Styling)
-    updateRewardsTier(state.totalPoints);
-}
+    if (!firstConfirm) return;
 
-// Helper: Dynamically Unlock/Lock Reward Tiers
-function updateRewardsTier(points) {
-    // Defines tiers [Points required, CSS class name]
-    const tiers = [
-        [50, 'tier-50'],
-        [100, 'tier-100'],
-        [200, 'tier-200']
-    ];
+    const secondConfirm = confirm(
+        "Final confirmation: should the chart return to zero?"
+    );
 
-    tiers.forEach(([required, className]) => {
-        const rewardElement = document.querySelector(`.reward.${className}`);
-        if (rewardElement) {
-            if (points >= required) {
-                rewardElement.classList.remove('locked');
-                rewardElement.classList.add('unlocked');
-            } else {
-                rewardElement.classList.remove('unlocked');
-                rewardElement.classList.add('locked');
+    if (!secondConfirm) return;
+
+    pointsRef.set({
+        totalPoints: 0,
+        goldStars: 0,
+        redStars: 0
+    }).then(() => {
+        location.reload();
+    }).catch((error) => {
+        alert("The chart could not be reset. Please check Firebase permissions.");
+        console.error("Master reset failed:", error);
+    });
+});
+
+document.querySelectorAll(".trade-btn").forEach((btn) => {
+    btn.addEventListener("click", (event) => {
+        const cost = parseInt(event.currentTarget.dataset.cost, 10);
+
+        if (localPointsState.totalPoints >= cost) {
+            const confirmed = confirm(
+                `Do you want to cash in ${cost} points for this reward? Manager approval still applies.`
+            );
+
+            if (confirmed) {
+                pointsRef.update({
+                    totalPoints: localPointsState.totalPoints - cost
+                }).catch((error) => {
+                    alert("The points could not be traded. Please check Firebase permissions.");
+                    console.error("Trade failed:", error);
+                });
             }
         }
     });
+});
+
+function modifyPoints(type) {
+    const change = POINT_MODIFIERS[type];
+
+    const newState = {
+        totalPoints: localPointsState.totalPoints + change,
+        goldStars: localPointsState.goldStars + (type === "gold" ? 1 : 0),
+        redStars: localPointsState.redStars + (type === "red" ? 1 : 0)
+    };
+
+    pointsRef.update(newState).catch((error) => {
+        alert("The chart could not be updated. Please check Firebase permissions.");
+        console.error("Point update failed:", error);
+    });
 }
+
+function updateUI(state) {
+    currentPointsDisplay.innerText = state.totalPoints;
+    goldCountDisplay.innerText = state.goldStars;
+    redCountDisplay.innerText = state.redStars;
+
+    updateVisualStars(state);
+    updateRewardTiers(state.totalPoints);
+}
+
+function updateVisualStars(state) {
+    visualStarChart.innerHTML = "";
+
+    if (state.goldStars === 0 && state.redStars === 0) {
+        visualStarChart.innerHTML = '<p class="empty-bank">No stars yet. The chart awaits judgement.</p>';
+        return;
+    }
+
+    for (let i = 0; i < state.goldStars; i++) {
+        const star = document.createElement("i");
+        star.className = "fas fa-star";
+        star.style.color = "var(--gold)";
+        star.setAttribute("aria-label", "Gold star");
+        visualStarChart.appendChild(star);
+    }
+
+    for (let i = 0; i < state.redStars; i++) {
+        const redStar = document.createElement("i");
+        redStar.className = "fas fa-circle-exclamation";
+        redStar.style.color = "var(--red-star)";
+        redStar.setAttribute("aria-label", "Red star");
+        visualStarChart.appendChild(redStar);
+    }
+}
+
+function updateRewardTiers(totalPoints) {
+    const tiers = [
+        {
+            required: 50,
+            className: "tier-50"
+        },
+        {
+            required: 100,
+            className: "tier-100"
+        },
+        {
+            required: 200,
+            className: "tier-200"
+        }
+    ];
+
+    tiers.forEach((tier) => {
+        const rewardElement = document.querySelector(`.reward.${tier.className}`);
+
+        if (!rewardElement) return;
+
+        if (totalPoints >= tier.required) {
+            rewardElement.classList.remove("locked");
+            rewardElement.classList.add("unlocked");
+        } else {
+            rewardElement.classList.remove("unlocked");
+            rewardElement.classList.add("locked");
+        }
+    });
+}
+```
