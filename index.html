@@ -2,88 +2,338 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-agent=no">
-    <title>THE SP25 ACCESS CHART (OMK EDITION)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE SP25 ACCESS CHART</title>
+
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
 
+<body>
     <div class="app-container">
-        <header>
-            <i class="fas fa-motorcycle logo"></i>
+
+        <header class="hero">
+            <div class="logo-badge">
+                <i class="fas fa-motorcycle"></i>
+            </div>
+            <p class="eyebrow">Banter Compliance Division</p>
             <h1>THE OFFICIAL SP25 ACCESS CHART</h1>
-            <p class="subtitle">Banter Compliance Division</p>
+            <p class="subtitle">A highly scientific reward system for Tom’s ongoing access privileges.</p>
         </header>
 
         <section class="points-card">
             <div class="tally">
-                <span class="points-label">TOM'S SP25 ACCESS POINTS:</span>
+                <span class="points-label">Tom's SP25 Access Points</span>
                 <span id="currentPoints" class="points-number">0</span>
             </div>
+
             <div class="stars-display">
-                <div id="goldStarsTally" class="star-counter gold"><i class="fas fa-star"></i> <span id="goldCount">0</span></div>
-                <div id="redStarsTally" class="star-counter red"><i class="fas fa-circle-exclamation"></i> <span id="redCount">0</span></div>
+                <div class="star-counter gold">
+                    <i class="fas fa-star"></i>
+                    <span id="goldCount">0</span>
+                    <small>Gold</small>
+                </div>
+
+                <div class="star-counter red">
+                    <i class="fas fa-circle-exclamation"></i>
+                    <span id="redCount">0</span>
+                    <small>Red</small>
+                </div>
+            </div>
+
+            <div class="visual-bank-label">Visual Star Bank</div>
+            <div id="visualStarChart" class="visual-stars-container">
+                <p class="empty-bank">No stars yet. The chart awaits judgement.</p>
             </div>
         </section>
 
         <section class="control-panel">
-            <h2>MANAGER ACTIONS</h2>
+            <h2>Manager Actions</h2>
+
             <div class="controls-grid">
                 <button id="addGold" class="btn good-action">
-                    <i class="fas fa-star star-add"></i> AWARD GOLD STAR
+                    <i class="fas fa-star"></i>
+                    Award Gold Star
                     <span class="modifier">+10 Points</span>
                 </button>
+
                 <button id="addRed" class="btn bad-action">
-                    <i class="fas fa-circle-exclamation star-deduct"></i> ASSIGN RED STAR
+                    <i class="fas fa-circle-exclamation"></i>
+                    Assign Red Star
                     <span class="modifier">-10 Points</span>
                 </button>
             </div>
+
+            <button id="resetBtn" class="btn reset-action">
+                <i class="fas fa-trash-arrow-up"></i>
+                Restart Chart to Zero
+            </button>
         </section>
 
-        <section class="rules-box">
-            <h2>THE STICKER RULES</h2>
+        <section class="rules-summary">
+            <h2>The Sticker Rules</h2>
+
             <div class="rules-grid">
-                <div class="rule good">
-                    <i class="fas fa-handshake"></i>
-                    <h3>GOLD STAR: (Good Things)</h3>
-                    <p>Witty comebacks, actual date planned, helping stray dogs in Vietnam, showing up with good snacks.</p>
+                <div class="rule-card good">
+                    <i class="fas fa-star"></i>
+                    <h3>Gold Star</h3>
+                    <p>Earned for initiative, follow-through, quality snacks, rateworthy reels, practical support, approved boy jobs, and elite banter compliance.</p>
+                    <span class="points-pill">+10 points</span>
                 </div>
-                <div class="rule bad">
-                    <i class="fas fa-stopwatch"></i>
-                    <h3>RED STAR: (Bad Things)</h3>
-                    <p>Taking 5 hours to reply to a 3-word text, unearned cockiness, forgetting my order.</p>
+
+                <div class="rule-card bad">
+                    <i class="fas fa-circle-exclamation"></i>
+                    <h3>Red Star</h3>
+                    <p>Assigned for inconsistent communication, poor snack conduct, bad music selection, failure to appreciate banter, or serious Manager disappointment.</p>
+                    <span class="points-pill">-10 points</span>
                 </div>
             </div>
         </section>
 
+        <section class="rulebook">
+            <h2>Official Rulebook</h2>
+            <p class="rulebook-intro">All rules are legally binding within the jurisdiction of the Manager’s personal opinion.</p>
+
+            <details open>
+                <summary>
+                    <span><i class="fas fa-scroll"></i> Core Rules</span>
+                    <i class="fas fa-chevron-down"></i>
+                </summary>
+                <div class="details-content">
+                    <ul>
+                        <li>Gold stars are worth <strong>+10 points</strong>.</li>
+                        <li>Red stars are worth <strong>–10 points</strong>.</li>
+                        <li>One action usually equals one star, unless the behaviour is especially impressive, especially criminal, or requires immediate Manager intervention.</li>
+                        <li>Stars are awarded by the <strong>System Manager</strong>.</li>
+                        <li>Tom may appeal a decision, but only with a strong argument, sincere apology, quality snacks, or elite-level banter.</li>
+                        <li>Rules are subject to change at the Manager’s discretion.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span><i class="fas fa-star"></i> Gold Star Rules</span>
+                    <i class="fas fa-chevron-down"></i>
+                </summary>
+
+                <div class="details-content">
+                    <h3>Initiative and Follow-Through</h3>
+                    <ul>
+                        <li>Taking initiative.</li>
+                        <li>Following through on something he said he would do.</li>
+                        <li>Offering a practical idea, plan, or solution.</li>
+                        <li>Remembering a task, plan, or detail.</li>
+                        <li>Planning trips.</li>
+                        <li>Being reliable in a way that deserves formal recognition.</li>
+                    </ul>
+
+                    <h3>Snack and Beverage Compliance</h3>
+                    <ul>
+                        <li>Remembering my favourite foods.</li>
+                        <li>Remembering all intolerances and not treating them as optional side quests.</li>
+                        <li>Remembering my coffee order.</li>
+                        <li>Arriving with quality snacks.</li>
+                        <li>Sharing snacks without being dramatic.</li>
+                        <li>Not suggesting food options that are clearly incompatible with my known requirements.</li>
+                    </ul>
+
+                    <h3>Good Vibes and Banter</h3>
+                    <ul>
+                        <li>Delivering a genuinely funny comeback.</li>
+                        <li>Sending rateworthy reels.</li>
+                        <li>Making me laugh when I am annoyed.</li>
+                        <li>Admitting I am funnier.</li>
+                        <li>Accepting defeat gracefully when out-bantered.</li>
+                        <li>Providing good energy.</li>
+                    </ul>
+
+                    <h3>Acts of Service</h3>
+                    <ul>
+                        <li>Helping with a practical task.</li>
+                        <li>Completing approved boy jobs.</li>
+                        <li>Offering support.</li>
+                        <li>Showing kindness to humans and animals.</li>
+                        <li>Using practical skills for the greater good.</li>
+                        <li>Cooking.</li>
+                    </ul>
+
+                    <div class="callout">
+                        <h3>Approved Boy Jobs</h3>
+                        <p>Approved boy jobs include, but are not limited to carrying things, fixing things, opening stubborn jars, moving heavy objects, doing car things, reaching high things, handling practical tasks with minimal complaining, and using strength, height, tools, or general usefulness for the greater good.</p>
+                    </div>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span><i class="fas fa-crown"></i> Bonus Gold Star Behaviour</span>
+                    <i class="fas fa-chevron-down"></i>
+                </summary>
+
+                <div class="details-content">
+                    <p>Two gold stars may be awarded for exceptional behaviour, including:</p>
+                    <ul>
+                        <li>Showing major emotional intelligence.</li>
+                        <li>Agreeing that rap and/or hip-hop is elite.</li>
+                        <li>Fixing a mistake without being asked.</li>
+                        <li>Planning something genuinely useful, thoughtful, or funny.</li>
+                        <li>Performing an act of service so impressive it requires formal recognition.</li>
+                        <li>Admitting the Manager was right.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span><i class="fas fa-circle-exclamation"></i> Red Star Rules</span>
+                    <i class="fas fa-chevron-down"></i>
+                </summary>
+
+                <div class="details-content">
+                    <h3>Communication Crimes</h3>
+                    <ul>
+                        <li>Inconsistent communication without reasonable explanation.</li>
+                        <li>Taking excessive time to reply to a simple message when not busy, asleep, working, or otherwise legitimately unavailable.</li>
+                        <li>Leaving a message on read with no follow-up.</li>
+                        <li>Doubling down instead of owning his actions.</li>
+                        <li>Saying “I’ll let you know” and then not letting anyone know.</li>
+                        <li>Forgetting important details that have already been formally established.</li>
+                    </ul>
+
+                    <h3>Planning and Effort Offences</h3>
+                    <ul>
+                        <li>Not following through on something he said he would do.</li>
+                        <li>Making the Manager organise everything.</li>
+                        <li>Forgetting a plan, task, or detail that was already agreed on.</li>
+                        <li>Failing to take initiative when initiative was clearly available.</li>
+                        <li>Making me walk in the rain.</li>
+                        <li>Forgetting my birthday.</li>
+                    </ul>
+
+                    <h3>Snack and Order Violations</h3>
+                    <ul>
+                        <li>Forgetting my order.</li>
+                        <li>Bringing bad snacks.</li>
+                        <li>Not letting me eat his chips.</li>
+                        <li>Refusing to share snacks.</li>
+                        <li>Suggesting food that clearly ignores my intolerances.</li>
+                        <li>Providing a sweet-to-healthy snack ratio outside the required 20:80 standard.</li>
+                    </ul>
+
+                    <h3>Vibe and Banter Offences</h3>
+                    <ul>
+                        <li>Never telling me I am funny.</li>
+                        <li>Refusing to admit I am funnier.</li>
+                        <li>Providing poor energy.</li>
+                        <li>Sending low-quality reels.</li>
+                        <li>Making a bad joke and then doubling down.</li>
+                        <li>Failing to appreciate elite banter.</li>
+                    </ul>
+
+                    <h3>Cultural and Music Crimes</h3>
+                    <ul>
+                        <li>Bad music selection.</li>
+                        <li>Believing the New Zealand accent is better than the Australian accent.</li>
+                        <li>Not liking AFL.</li>
+                        <li>Disrespecting rap and/or hip-hop.</li>
+                    </ul>
+
+                    <h3>Sleep-Related Offences</h3>
+                    <p>A red star may be assigned for falling asleep reallyyyyy early if it occurs during active plans, an agreed conversation, or a situation where staying awake was clearly part of the social contract.</p>
+                    <p><strong>Normal sleep does not count as an offence.</strong></p>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span><i class="fas fa-shield-heart"></i> No Red Star Zones</span>
+                    <i class="fas fa-chevron-down"></i>
+                </summary>
+
+                <div class="details-content">
+                    <p>Red stars should not be given for:</p>
+                    <ul>
+                        <li>Being asleep.</li>
+                        <li>Being at work.</li>
+                        <li>Having a genuine emergency.</li>
+                        <li>Taking reasonable time to reply when busy.</li>
+                        <li>Being honest about needing space or downtime.</li>
+                        <li>Things that are actually serious and need a real conversation.</li>
+                        <li>Not being available 24/7 like a customer service chatbot.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span><i class="fas fa-heart-circle-check"></i> Redemption Rules</span>
+                    <i class="fas fa-chevron-down"></i>
+                </summary>
+
+                <div class="details-content">
+                    <p>Tom may earn back favour by:</p>
+                    <ul>
+                        <li>Apologising properly.</li>
+                        <li>Fixing the issue.</li>
+                        <li>Making a better plan.</li>
+                        <li>Bringing snacks.</li>
+                        <li>Making the Manager laugh.</li>
+                        <li>Demonstrating improved compliance over time.</li>
+                        <li>Accepting accountability without unnecessary legal defence.</li>
+                        <li>Showing improved behaviour across multiple charting periods.</li>
+                    </ul>
+                    <p>A sincere redemption action may earn a gold star, but it does not automatically remove the original red star. <strong>The chart remembers.</strong></p>
+                </div>
+            </details>
+        </section>
+
         <section class="rewards-section">
-            <h2>SP25 USAGE REWARDS</h2>
+            <h2>SP25 Usage Rewards</h2>
+            <p class="rewards-intro">Rewards unlock when Tom has enough points and remains in good standing.</p>
+
             <div id="rewardsList" class="rewards-grid">
                 <div class="reward tier-50 locked">
+                    <span class="tier-mark">Tier 1</span>
                     <i class="fas fa-car-side"></i>
-                    <h3>30-min Supervised Joyride</h3>
-                    <p>Unlock at 50 pts</p>
-                    <span class="tier-mark">TIER 1</span>
+                    <h3>30-minute Supervised Joyride</h3>
+                    <p>Unlock at 50 points</p>
+                    <button class="trade-btn" data-cost="50">
+                        <i class="fas fa-key"></i>
+                        Trade 50 Points
+                    </button>
                 </div>
+
                 <div class="reward tier-100 locked">
+                    <span class="tier-mark">Tier 2</span>
                     <i class="fas fa-car"></i>
                     <h3>Half-Day Rental</h3>
-                    <p>Unlock at 100 pts</p>
-                    <span class="tier-mark">TIER 2</span>
+                    <p>Unlock at 100 points</p>
+                    <button class="trade-btn" data-cost="100">
+                        <i class="fas fa-key"></i>
+                        Trade 100 Points
+                    </button>
                 </div>
+
                 <div class="reward tier-200 locked">
-                    <i class="fas fa-globe-asia"></i>
+                    <span class="tier-mark">Tier 3</span>
+                    <i class="fas fa-road"></i>
                     <h3>Full Weekend Privileges</h3>
-                    <p>Unlock at 200 pts</p>
-                    <span class="tier-mark">TIER 3</span>
+                    <p>Unlock at 200 points</p>
+                    <button class="trade-btn" data-cost="200">
+                        <i class="fas fa-key"></i>
+                        Trade 200 Points
+                    </button>
                 </div>
+            </div>
+
+            <div class="fine-print">
+                Rewards may be delayed, denied, or revoked for safety reasons, timing, licence status, insurance, poor attitude, recent red stars, or suspicious overconfidence.
             </div>
         </section>
 
         <footer>
-            <p>System Manager: You | Subordinate Manager: Tom (Beta)</p>
-            <p>Aesthetic Compliance provided by Purple, Green, Blue Theme.</p>
+            <p>System Manager: You | Tom Status: Under Review</p>
         </footer>
     </div>
 
