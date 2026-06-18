@@ -115,19 +115,31 @@ pointsRef.set({
 document.querySelectorAll(".trade-btn").forEach(function (btn) {
 btn.addEventListener("click", function (event) {
 const cost = parseInt(event.currentTarget.dataset.cost, 10);
+const rewardCard = event.currentTarget.closest(".reward");
+const rewardTitleElement = rewardCard ? rewardCard.querySelector("h3") : null;
+const rewardTitle = rewardTitleElement ? rewardTitleElement.innerText : "Sticker Reward";
 
-    if (localPointsState.totalPoints >= cost) {
-        const confirmed = confirm("Do you want to cash in " + cost + " points for this reward? Manager approval still applies.");
-
-        if (confirmed) {
-            pointsRef.update({
-                totalPoints: localPointsState.totalPoints - cost
-            }).catch(function (error) {
-                alert("The points could not be traded. Please check Firebase permissions.");
-                console.error("Trade failed:", error);
-            });
-        }
+    if (localPointsState.totalPoints < cost) {
+        alert("Tom does not have enough points for this reward yet.");
+        return;
     }
+
+    const confirmed = confirm("Trade " + cost + " points for: " + rewardTitle + "? A reward token will download after approval.");
+
+    if (!confirmed) {
+        return;
+    }
+
+    const remainingPoints = localPointsState.totalPoints - cost;
+
+    pointsRef.update({
+        totalPoints: remainingPoints
+    }).then(function () {
+        downloadRewardToken(rewardTitle, cost, remainingPoints);
+    }).catch(function (error) {
+        alert("The points could not be traded. Please check Firebase permissions.");
+        console.error("Trade failed:", error);
+    });
 });
 
 });
@@ -220,4 +232,121 @@ tiers.forEach(function (tier) {
     }
 });
 
+}
+
+// --- STEP 13: CREATE AND DOWNLOAD REWARD TOKEN ---
+function downloadRewardToken(rewardTitle, cost, remainingPoints) {
+const canvas = document.createElement("canvas");
+const width = 1200;
+const height = 800;
+const scale = window.devicePixelRatio || 1;
+
+canvas.width = width * scale;
+canvas.height = height * scale;
+
+const ctx = canvas.getContext("2d");
+ctx.scale(scale, scale);
+
+const issuedAt = new Date().toLocaleString("en-AU", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+});
+
+ctx.fillStyle = "#f3f7ee";
+ctx.fillRect(0, 0, width, height);
+
+drawRoundedRect(ctx, 55, 55, width - 110, height - 110, 34, "#fffaf0");
+drawRoundedRect(ctx, 95, 95, width - 190, height - 190, 28, "#ffffff");
+
+ctx.textAlign = "center";
+ctx.fillStyle = "#607d5f";
+ctx.font = "900 26px Arial";
+ctx.fillText("BANTER COMPLIANCE DIVISION", width / 2, 150);
+
+ctx.fillStyle = "#243238";
+ctx.font = "900 64px Arial";
+ctx.fillText("REWARD TOKEN", width / 2, 235);
+
+ctx.font = "900 44px Arial";
+ctx.fillText("Tom's Sticker Chart", width / 2, 305);
+
+ctx.fillStyle = "#6c5ce7";
+ctx.font = "900 50px Arial";
+wrapCenteredText(ctx, rewardTitle, width / 2, 395, 900, 56);
+
+ctx.fillStyle = "#344044";
+ctx.font = "700 30px Arial";
+ctx.fillText("Redeemed for " + cost + " points", width / 2, 520);
+
+ctx.fillStyle = "#66767a";
+ctx.font = "700 24px Arial";
+ctx.fillText("Remaining points after trade: " + remainingPoints, width / 2, 570);
+ctx.fillText("Issued: " + issuedAt, width / 2, 615);
+
+drawRoundedRect(ctx, 330, 660, 540, 55, 999, "#d8f3e5");
+
+ctx.fillStyle = "#3f7d5f";
+ctx.font = "900 24px Arial";
+ctx.fillText("Car privileges pending Manager approval", width / 2, 696);
+
+ctx.font = "42px Arial";
+ctx.fillText("🚗 🏁 🥖", width / 2, 760);
+
+const fileName = "toms-sticker-chart-" + makeSafeFileName(rewardTitle) + "-token.png";
+const link = document.createElement("a");
+
+link.download = fileName;
+link.href = canvas.toDataURL("image/png");
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+
+}
+
+function drawRoundedRect(ctx, x, y, width, height, radius, color) {
+ctx.beginPath();
+ctx.moveTo(x + radius, y);
+ctx.lineTo(x + width - radius, y);
+ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+ctx.lineTo(x + width, y + height - radius);
+ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+ctx.lineTo(x + radius, y + height);
+ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+ctx.lineTo(x, y + radius);
+ctx.quadraticCurveTo(x, y, x + radius, y);
+ctx.closePath();
+ctx.fillStyle = color;
+ctx.fill();
+}
+
+function wrapCenteredText(ctx, text, x, y, maxWidth, lineHeight) {
+const words = text.split(" ");
+let line = "";
+let currentY = y;
+
+for (let i = 0; i < words.length; i++) {
+    const testLine = line + words[i] + " ";
+    const metrics = ctx.measureText(testLine);
+
+    if (metrics.width > maxWidth && i > 0) {
+        ctx.fillText(line.trim(), x, currentY);
+        line = words[i] + " ";
+        currentY = currentY + lineHeight;
+    } else {
+        line = testLine;
+    }
+}
+
+ctx.fillText(line.trim(), x, currentY);
+
+}
+
+function makeSafeFileName(text) {
+return text
+.toLowerCase()
+.replace(/[^a-z0-9]+/g, "-")
+.replace(/^-+|-+$/g, "");
 }
