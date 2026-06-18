@@ -11,7 +11,6 @@ storageBucket: "tom-sticker-chart.firebasestorage.app",
 messagingSenderId: "639564337276",
 appId: "1:639564337276:web:d8bee0a7206ecefdd7b9f9"
 };
-// ---------------------------------
 
 // --- STEP 2: APP LOGIC ---
 
@@ -55,24 +54,28 @@ let localPointsState = {
     redStars: 0
 };
 
-pointsRef.on("value", (snapshot) => {
-    const data = snapshot.val();
+pointsRef.on(
+    "value",
+    (snapshot) => {
+        const data = snapshot.val();
 
-    if (data) {
-        localPointsState = {
-            totalPoints: Number(data.totalPoints) || 0,
-            goldStars: Number(data.goldStars) || 0,
-            redStars: Number(data.redStars) || 0
-        };
-    } else {
-        pointsRef.set(localPointsState);
+        if (data) {
+            localPointsState = {
+                totalPoints: Number(data.totalPoints) || 0,
+                goldStars: Number(data.goldStars) || 0,
+                redStars: Number(data.redStars) || 0
+            };
+        } else {
+            pointsRef.set(localPointsState);
+        }
+
+        updateUI(localPointsState);
+    },
+    (error) => {
+        console.error("Firebase read failed:", error);
+        alert("The chart could not load from Firebase. Check your database rules.");
     }
-
-    updateUI(localPointsState);
-}, (error) => {
-    console.error("Firebase read failed:", error);
-    alert("The chart could not load from Firebase. Check your database rules.");
-});
+);
 
 addGoldButton.addEventListener("click", () => {
     console.log("Gold star clicked.");
@@ -101,16 +104,19 @@ masterResetButton.addEventListener("click", () => {
 
     if (!secondConfirm) return;
 
-    pointsRef.set({
-        totalPoints: 0,
-        goldStars: 0,
-        redStars: 0
-    }).then(() => {
-        location.reload();
-    }).catch((error) => {
-        alert("The chart could not be reset. Please check Firebase permissions.");
-        console.error("Master reset failed:", error);
-    });
+    pointsRef
+        .set({
+            totalPoints: 0,
+            goldStars: 0,
+            redStars: 0
+        })
+        .then(() => {
+            location.reload();
+        })
+        .catch((error) => {
+            alert("The chart could not be reset. Please check Firebase permissions.");
+            console.error("Master reset failed:", error);
+        });
 });
 
 document.querySelectorAll(".trade-btn").forEach((btn) => {
@@ -123,12 +129,14 @@ document.querySelectorAll(".trade-btn").forEach((btn) => {
             );
 
             if (confirmed) {
-                pointsRef.update({
-                    totalPoints: localPointsState.totalPoints - cost
-                }).catch((error) => {
-                    alert("The points could not be traded. Please check Firebase permissions.");
-                    console.error("Trade failed:", error);
-                });
+                pointsRef
+                    .update({
+                        totalPoints: localPointsState.totalPoints - cost
+                    })
+                    .catch((error) => {
+                        alert("The points could not be traded. Please check Firebase permissions.");
+                        console.error("Trade failed:", error);
+                    });
             }
         }
     });
@@ -143,12 +151,15 @@ function modifyPoints(type) {
         redStars: localPointsState.redStars + (type === "red" ? 1 : 0)
     };
 
-    pointsRef.update(newState).then(() => {
-        console.log(`${type} star saved successfully.`, newState);
-    }).catch((error) => {
-        alert("The chart could not be updated. Please check Firebase permissions.");
-        console.error("Point update failed:", error);
-    });
+    pointsRef
+        .update(newState)
+        .then(() => {
+            console.log(`${type} star saved successfully.`, newState);
+        })
+        .catch((error) => {
+            alert("The chart could not be updated. Please check Firebase permissions.");
+            console.error("Point update failed:", error);
+        });
 }
 
 function updateUI(state) {
@@ -215,6 +226,5 @@ function updateRewardTiers(totalPoints) {
         }
     });
 }
-```
 
 });
