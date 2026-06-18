@@ -1,0 +1,249 @@
+/* Custom properties for easy color swapping */
+:root {
+    /* Primary Colors (from preferences) */
+    --purple: #6c5ce7;
+    --green: #00b894;
+    --blue: #0984e3;
+    
+    /* Secondary Colors (UI needs) */
+    --background: #fdfefe;
+    --card-bg: #f7f9fc;
+    --good-action: var(--green);
+    --bad-action: #ff7675; /* Soft red, less aggressive */
+    --text-primary: #2d3436;
+    --text-secondary: #636e72;
+    --text-on-dark: #ffffff;
+    
+    /* System Colors */
+    --locked: #b2bec3;
+    --unlocked: var(--purple);
+}
+
+/* Base Reset (Clean and Modern) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--background);
+    color: var(--text-primary);
+    line-height: 1.4;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); /* Safe area for iPhone notch */
+}
+
+.app-container {
+    max-width: 600px; /* Modern container width */
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header (Modern, uses Purple/Blue gradient) */
+header {
+    text-align: center;
+    padding: 30px 0 20px;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--purple), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* Points Card (Clean, Modern, Blue Theme) */
+.points-card {
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+    border-top: 5px solid var(--blue);
+}
+
+.points-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.points-number {
+    font-size: 4.5rem;
+    font-weight: 900;
+    color: var(--blue);
+    line-height: 1;
+}
+
+.stars-display {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.star-counter {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+}
+
+.star-counter.gold { color: var(--green); }
+.star-counter.red { color: var(--bad-action); }
+
+/* Buttons & Controls (Modern, Bold) */
+.control-panel {
+    margin-bottom: 30px;
+    padding: 0 10px;
+}
+
+.control-panel h2 {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn {
+    border: none;
+    padding: 15px 10px;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    color: var(--text-on-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn i { font-size: 1.2rem; margin-bottom: 5px; }
+
+.good-action {
+    background-color: var(--good-action);
+    box-shadow: 0 4px 10px rgba(0, 184, 148, 0.2);
+}
+
+.bad-action {
+    background-color: var(--bad-action);
+    box-shadow: 0 4px 10px rgba(255, 118, 117, 0.2);
+}
+
+.btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.modifier {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.9;
+    margin-top: 2px;
+}
+
+/* Rules Section (Simple and Clear) */
+.rules-box, .rewards-section { margin-bottom: 30px; }
+
+.rules-box h2, .rewards-section h2 {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.rules-grid, .rewards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.rewards-grid { grid-template-columns: 1fr; }
+
+.rule, .reward {
+    background-color: var(--card-bg);
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+.rule i { font-size: 1.5rem; color: var(--text-secondary); margin-bottom: 5px; }
+.rule.good h3 { color: var(--good-action); font-size: 0.95rem; }
+.rule.bad h3 { color: var(--bad-action); font-size: 0.95rem; }
+.rule p { font-size: 0.8rem; color: var(--text-secondary); margin-top: 3px; }
+
+/* Rewards Section (Progress System) */
+.reward {
+    grid-template-columns: 1fr;
+    border-left: 5px solid var(--locked);
+    position: relative;
+}
+
+.reward.locked {
+    background-color: #f1f3f7;
+}
+
+.reward.unlocked {
+    border-left-color: var(--unlocked);
+}
+
+.reward i { font-size: 1.5rem; color: var(--text-secondary); }
+.reward.locked i { color: #b2bec3; }
+.reward.unlocked i { color: var(--unlocked); }
+
+.reward h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-top: 3px; }
+.reward.locked h3 { color: #b2bec3; }
+
+.reward p { font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px; }
+
+.tier-mark {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--locked);
+    color: var(--text-on-dark);
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 3px 6px;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
+
+.reward.unlocked .tier-mark { background-color: var(--unlocked); }
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px 0;
+    border-top: 1px solid #f1f3f7;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
