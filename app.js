@@ -125,7 +125,7 @@ document.querySelectorAll(".trade-btn").forEach((btn) => {
 
         if (localPointsState.totalPoints >= cost) {
             const confirmed = confirm(
-                `Do you want to cash in ${cost} points for this reward? Manager approval still applies.`
+                "Do you want to cash in " + cost + " points for this reward? Manager approval still applies."
             );
 
             if (confirmed) {
@@ -154,7 +154,7 @@ function modifyPoints(type) {
     pointsRef
         .update(newState)
         .then(() => {
-            console.log(`${type} star saved successfully.`, newState);
+            console.log(type + " star saved successfully.", newState);
         })
         .catch((error) => {
             alert("The chart could not be updated. Please check Firebase permissions.");
@@ -213,7 +213,7 @@ function updateRewardTiers(totalPoints) {
     ];
 
     tiers.forEach((tier) => {
-        const rewardElement = document.querySelector(`.reward.${tier.className}`);
+        const rewardElement = document.querySelector(".reward." + tier.className);
 
         if (!rewardElement) return;
 
