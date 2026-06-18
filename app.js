@@ -247,147 +247,81 @@ const ctx = canvas.getContext("2d");
 
 const issuedAt = new Date().toLocaleString("en-AU", {
     day: "2-digit",
-    month: "short",
+    month: "long",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit"
 });
 
+// Background
 ctx.fillStyle = "#f3f7ee";
 ctx.fillRect(0, 0, width, height);
 
-drawRoundedRect(ctx, 55, 55, width - 110, height - 110, 36, "#fffaf0");
-drawRoundedRect(ctx, 95, 95, width - 190, height - 190, 28, "#ffffff");
+// Outer card
+ctx.fillStyle = "#fffaf0";
+ctx.fillRect(70, 70, width - 140, height - 140);
+
+// Inner card
+ctx.fillStyle = "#ffffff";
+ctx.fillRect(115, 115, width - 230, height - 230);
+
+// Borders
+ctx.strokeStyle = "#d8e1d8";
+ctx.lineWidth = 4;
+ctx.strokeRect(70, 70, width - 140, height - 140);
+
+ctx.strokeStyle = "#eadff8";
+ctx.lineWidth = 4;
+ctx.strokeRect(115, 115, width - 230, height - 230);
 
 ctx.textAlign = "center";
 
+// Header
 ctx.fillStyle = "#607d5f";
 ctx.font = "900 26px Arial";
-ctx.fillText("BANTER COMPLIANCE DIVISION", width / 2, 150);
+ctx.fillText("BANTER COMPLIANCE DIVISION", width / 2, 165);
 
 ctx.fillStyle = "#243238";
-ctx.font = "900 60px Arial";
-ctx.fillText("REWARD TOKEN", width / 2, 230);
+ctx.font = "900 64px Arial";
+ctx.fillText("REWARD TOKEN", width / 2, 250);
 
 ctx.fillStyle = "#344044";
 ctx.font = "900 38px Arial";
-ctx.fillText("Tom's Sticker Chart", width / 2, 295);
+ctx.fillText("Tom's Sticker Chart", width / 2, 310);
 
+// Reward title
 ctx.fillStyle = "#6c5ce7";
 ctx.font = "900 48px Arial";
-wrapCenteredText(ctx, rewardTitle, width / 2, 390, 850, 56);
+wrapCenteredText(ctx, rewardTitle, width / 2, 405, 850, 58);
 
-drawRoundedRect(ctx, 285, 485, 630, 72, 999, "#eadff8");
+// Redeemed points box
+ctx.fillStyle = "#eadff8";
+ctx.fillRect(280, 490, 640, 72);
 
 ctx.fillStyle = "#6c5ce7";
 ctx.font = "900 30px Arial";
-ctx.fillText("Redeemed for " + cost + " points", width / 2, 532);
+ctx.fillText("Redeemed for " + cost + " points", width / 2, 535);
 
+// Details
 ctx.fillStyle = "#66767a";
 ctx.font = "700 24px Arial";
-ctx.fillText("Remaining points after trade: " + remainingPoints, width / 2, 600);
-ctx.fillText("Issued: " + issuedAt, width / 2, 640);
+ctx.fillText("Remaining points after trade: " + remainingPoints, width / 2, 615);
+ctx.fillText("Issued: " + issuedAt, width / 2, 655);
 
-drawRoundedRect(ctx, 310, 680, 580, 56, 999, "#d8f3e5");
-
+// Footer
 ctx.fillStyle = "#3f7d5f";
 ctx.font = "900 23px Arial";
-ctx.fillText("Car privileges pending Manager approval", width / 2, 716);
-
-drawMiniCar(ctx, 430, 735);
-drawMiniFlag(ctx, 565, 727);
-drawBanhMiLabel(ctx, 665, 728);
+ctx.fillText("Reward issued pending Manager approval", width / 2, 720);
 
 const fileName = "toms-sticker-chart-" + makeSafeFileName(rewardTitle) + "-token.png";
 const link = document.createElement("a");
 
 link.download = fileName;
 link.href = canvas.toDataURL("image/png");
+
 document.body.appendChild(link);
 link.click();
 document.body.removeChild(link);
-
-}
-
-function drawRoundedRect(ctx, x, y, width, height, radius, color) {
-const safeRadius = Math.min(radius, width / 2, height / 2);
-
-ctx.beginPath();
-ctx.moveTo(x + safeRadius, y);
-ctx.lineTo(x + width - safeRadius, y);
-ctx.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
-ctx.lineTo(x + width, y + height - safeRadius);
-ctx.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
-ctx.lineTo(x + safeRadius, y + height);
-ctx.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
-ctx.lineTo(x, y + safeRadius);
-ctx.quadraticCurveTo(x, y, x + safeRadius, y);
-ctx.closePath();
-
-ctx.fillStyle = color;
-ctx.fill();
-
-}
-
-function drawMiniCar(ctx, x, y) {
-ctx.fillStyle = "#6c5ce7";
-drawRoundedRect(ctx, x, y, 82, 30, 8, "#6c5ce7");
-
-ctx.fillStyle = "#3578a6";
-drawRoundedRect(ctx, x + 18, y - 20, 42, 24, 6, "#3578a6");
-
-ctx.fillStyle = "#ffffff";
-drawRoundedRect(ctx, x + 25, y - 15, 13, 12, 3, "#ffffff");
-drawRoundedRect(ctx, x + 42, y - 15, 13, 12, 3, "#ffffff");
-
-ctx.fillStyle = "#243238";
-ctx.beginPath();
-ctx.arc(x + 18, y + 31, 9, 0, Math.PI * 2);
-ctx.fill();
-
-ctx.beginPath();
-ctx.arc(x + 64, y + 31, 9, 0, Math.PI * 2);
-ctx.fill();
-
-ctx.fillStyle = "#ffffff";
-ctx.beginPath();
-ctx.arc(x + 18, y + 31, 4, 0, Math.PI * 2);
-ctx.fill();
-
-ctx.beginPath();
-ctx.arc(x + 64, y + 31, 4, 0, Math.PI * 2);
-ctx.fill();
-
-}
-
-function drawMiniFlag(ctx, x, y) {
-ctx.fillStyle = "#344044";
-ctx.fillRect(x, y, 5, 58);
-
-const square = 12;
-const startX = x + 8;
-const startY = y;
-
-for (let row = 0; row < 4; row++) {
-    for (let col = 0; col < 5; col++) {
-        ctx.fillStyle = (row + col) % 2 === 0 ? "#243238" : "#ffffff";
-        ctx.fillRect(startX + col * square, startY + row * square, square, square);
-    }
-}
-
-ctx.strokeStyle = "#243238";
-ctx.lineWidth = 2;
-ctx.strokeRect(startX, startY, square * 5, square * 4);
-
-}
-
-function drawBanhMiLabel(ctx, x, y) {
-drawRoundedRect(ctx, x, y, 150, 50, 999, "#fff1c7");
-
-ctx.fillStyle = "#7a5200";
-ctx.font = "900 20px Arial";
-ctx.textAlign = "center";
-ctx.fillText("banh mi", x + 75, y + 32);
 
 }
 
