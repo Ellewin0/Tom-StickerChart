@@ -48,7 +48,6 @@ pointsRef.on(
 function (snapshot) {
 const data = snapshot.val();
 
-```
     if (data) {
         localPointsState = {
             totalPoints: Number(data.totalPoints) || 0,
@@ -64,10 +63,7 @@ const data = snapshot.val();
 function (error) {
     console.error("Firebase read failed:", error);
     alert("The chart could not load from Firebase. Check your database rules.");
-}
-```
-
-);
+});
 
 // --- STEP 7: BUTTON ACTIONS ---
 addGoldButton.addEventListener("click", function () {
@@ -199,7 +195,6 @@ for (let i = 0; i < state.redStars; i++) {
     redStar.setAttribute("aria-label", "Red star");
     visualStarChart.appendChild(redStar);
 }
-```
 
 }
 
@@ -220,7 +215,6 @@ className: "tier-200"
 }
 ];
 
-```
 tiers.forEach(function (tier) {
     const rewardElement = document.querySelector(".reward." + tier.className);
 
