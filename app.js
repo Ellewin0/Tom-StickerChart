@@ -3,20 +3,22 @@
 
 // --- STEP 1: FIREBASE CONFIG ---
 const firebaseConfig = {
-    apiKey: "AIzaSyATw1DuMrVzrKeb8Ebj3iVxQf-eafgG2bk",
-    authDomain: "tom-sticker-chart.firebaseapp.com",
-    databaseURL: "https://tom-sticker-chart-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "tom-sticker-chart",
-    storageBucket: "tom-sticker-chart.firebasestorage.app",
-    messagingSenderId: "639564337276",
-    appId: "1:639564337276:web:d8bee0a7206ecefdd7b9f9"
+apiKey: "AIzaSyATw1DuMrVzrKeb8Ebj3iVxQf-eafgG2bk",
+authDomain: "tom-sticker-chart.firebaseapp.com",
+databaseURL: "https://tom-sticker-chart-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "tom-sticker-chart",
+storageBucket: "tom-sticker-chart.firebasestorage.app",
+messagingSenderId: "639564337276",
+appId: "1:639564337276:web:d8bee0a7206ecefdd7b9f9"
 };
 // ---------------------------------
 
 // --- STEP 2: APP LOGIC ---
 
-// Initialize Firebase
+document.addEventListener("DOMContentLoaded", () => {
+console.log("SP25 chart app loaded.");
 
+```
 firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
@@ -37,6 +39,16 @@ const addRedButton = document.getElementById("addRed");
 const refreshButton = document.getElementById("refreshBtn");
 const masterResetButton = document.getElementById("masterResetBtn");
 
+if (!currentPointsDisplay || !goldCountDisplay || !redCountDisplay || !visualStarChart) {
+    console.error("One or more display elements are missing from index.html.");
+    return;
+}
+
+if (!addGoldButton || !addRedButton || !refreshButton || !masterResetButton) {
+    console.error("One or more buttons are missing from index.html.");
+    return;
+}
+
 let localPointsState = {
     totalPoints: 0,
     goldStars: 0,
@@ -48,22 +60,27 @@ pointsRef.on("value", (snapshot) => {
 
     if (data) {
         localPointsState = {
-            totalPoints: data.totalPoints || 0,
-            goldStars: data.goldStars || 0,
-            redStars: data.redStars || 0
+            totalPoints: Number(data.totalPoints) || 0,
+            goldStars: Number(data.goldStars) || 0,
+            redStars: Number(data.redStars) || 0
         };
-
-        updateUI(localPointsState);
     } else {
         pointsRef.set(localPointsState);
     }
+
+    updateUI(localPointsState);
+}, (error) => {
+    console.error("Firebase read failed:", error);
+    alert("The chart could not load from Firebase. Check your database rules.");
 });
 
 addGoldButton.addEventListener("click", () => {
+    console.log("Gold star clicked.");
     modifyPoints("gold");
 });
 
 addRedButton.addEventListener("click", () => {
+    console.log("Red star clicked.");
     modifyPoints("red");
 });
 
@@ -126,7 +143,9 @@ function modifyPoints(type) {
         redStars: localPointsState.redStars + (type === "red" ? 1 : 0)
     };
 
-    pointsRef.update(newState).catch((error) => {
+    pointsRef.update(newState).then(() => {
+        console.log(`${type} star saved successfully.`, newState);
+    }).catch((error) => {
         alert("The chart could not be updated. Please check Firebase permissions.");
         console.error("Point update failed:", error);
     });
@@ -197,3 +216,5 @@ function updateRewardTiers(totalPoints) {
     });
 }
 ```
+
+});
