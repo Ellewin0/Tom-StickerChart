@@ -235,7 +235,6 @@ tiers.forEach(function (tier) {
 }
 
 // --- STEP 13: CREATE AND DOWNLOAD REWARD TOKEN ---
-// --- STEP 13: CREATE AND DOWNLOAD REWARD TOKEN ---
 function downloadRewardToken(rewardTitle, cost, remainingPoints) {
 const canvas = document.createElement("canvas");
 const width = 1200;
