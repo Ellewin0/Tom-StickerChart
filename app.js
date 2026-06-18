@@ -1,5 +1,5 @@
 // app.js - Banter Compliance Division
-// THE SP25 ACCESS CHART (OMK EDITION)
+// Tom's Sticker Chart
 
 // --- STEP 1: FIREBASE CONFIG ---
 const firebaseConfig = {
@@ -32,8 +32,9 @@ const visualStarChart = document.getElementById("visualStarChart");
 
 const addGoldButton = document.getElementById("addGold");
 const addRedButton = document.getElementById("addRed");
-const refreshButton = document.getElementById("refreshBtn");
 const masterResetButton = document.getElementById("masterResetBtn");
+const adminResetPanel = document.getElementById("adminResetPanel");
+const adminRevealTrigger = document.getElementById("adminRevealTrigger");
 
 // --- STEP 5: LOCAL STATE ---
 let localPointsState = {
@@ -42,74 +43,71 @@ goldStars: 0,
 redStars: 0
 };
 
+let adminClickCount = 0;
+
 // --- STEP 6: LOAD AND SYNC POINTS FROM FIREBASE ---
-pointsRef.on(
-"value",
-function (snapshot) {
+pointsRef.on("value", function (snapshot) {
 const data = snapshot.val();
 
-    if (data) {
-        localPointsState = {
-            totalPoints: Number(data.totalPoints) || 0,
-            goldStars: Number(data.goldStars) || 0,
-            redStars: Number(data.redStars) || 0
-        };
-    } else {
-        pointsRef.set(localPointsState);
-    }
+if (data) {
+    localPointsState = {
+        totalPoints: Number(data.totalPoints) || 0,
+        goldStars: Number(data.goldStars) || 0,
+        redStars: Number(data.redStars) || 0
+    };
+} else {
+    pointsRef.set(localPointsState);
+}
 
-    updateUI(localPointsState);
-},
-function (error) {
-    console.error("Firebase read failed:", error);
-    alert("The chart could not load from Firebase. Check your database rules.");
+updateUI(localPointsState);
+
+}, function (error) {
+console.error("Firebase read failed:", error);
+alert("The chart could not load from Firebase. Check your database rules.");
 });
 
 // --- STEP 7: BUTTON ACTIONS ---
 addGoldButton.addEventListener("click", function () {
-console.log("Gold star clicked.");
 modifyPoints("gold");
 });
 
 addRedButton.addEventListener("click", function () {
-console.log("Red star clicked.");
 modifyPoints("red");
 });
 
-refreshButton.addEventListener("click", function () {
-location.reload();
+adminRevealTrigger.addEventListener("click", function () {
+adminClickCount = adminClickCount + 1;
+
+if (adminClickCount >= 5) {
+    adminResetPanel.classList.add("visible");
+}
+
 });
 
 masterResetButton.addEventListener("click", function () {
-const firstConfirm = confirm(
-"Master Reset: this will clear Tom's points, gold stars, red stars, and formal compliance history. Continue?"
-);
+const firstConfirm = confirm("Clear All Points: this will reset Tom's points, gold stars, and red stars to zero. Continue?");
 
 if (!firstConfirm) {
     return;
 }
 
-const secondConfirm = confirm(
-    "Final confirmation: should the chart return to zero?"
-);
+const secondConfirm = confirm("Final confirmation: should the chart return to zero?");
 
 if (!secondConfirm) {
     return;
 }
 
-pointsRef
-    .set({
-        totalPoints: 0,
-        goldStars: 0,
-        redStars: 0
-    })
-    .then(function () {
-        location.reload();
-    })
-    .catch(function (error) {
-        alert("The chart could not be reset. Please check Firebase permissions.");
-        console.error("Master reset failed:", error);
-    });
+pointsRef.set({
+    totalPoints: 0,
+    goldStars: 0,
+    redStars: 0
+}).then(function () {
+    adminResetPanel.classList.remove("visible");
+    adminClickCount = 0;
+}).catch(function (error) {
+    alert("The chart could not be reset. Please check Firebase permissions.");
+    console.error("Clear all points failed:", error);
+});
 
 });
 
@@ -119,19 +117,15 @@ btn.addEventListener("click", function (event) {
 const cost = parseInt(event.currentTarget.dataset.cost, 10);
 
     if (localPointsState.totalPoints >= cost) {
-        const confirmed = confirm(
-            "Do you want to cash in " + cost + " points for this reward? Manager approval still applies."
-        );
+        const confirmed = confirm("Do you want to cash in " + cost + " points for this reward? Manager approval still applies.");
 
         if (confirmed) {
-            pointsRef
-                .update({
-                    totalPoints: localPointsState.totalPoints - cost
-                })
-                .catch(function (error) {
-                    alert("The points could not be traded. Please check Firebase permissions.");
-                    console.error("Trade failed:", error);
-                });
+            pointsRef.update({
+                totalPoints: localPointsState.totalPoints - cost
+            }).catch(function (error) {
+                alert("The points could not be traded. Please check Firebase permissions.");
+                console.error("Trade failed:", error);
+            });
         }
     }
 });
@@ -148,15 +142,10 @@ const newState = {
     redStars: localPointsState.redStars + (type === "red" ? 1 : 0)
 };
 
-pointsRef
-    .update(newState)
-    .then(function () {
-        console.log(type + " star saved successfully.", newState);
-    })
-    .catch(function (error) {
-        alert("The chart could not be updated. Please check Firebase permissions.");
-        console.error("Point update failed:", error);
-    });
+pointsRef.update(newState).catch(function (error) {
+    alert("The chart could not be updated. Please check Firebase permissions.");
+    console.error("Point update failed:", error);
+});
 
 }
 
@@ -190,7 +179,7 @@ for (let i = 0; i < state.goldStars; i++) {
 
 for (let i = 0; i < state.redStars; i++) {
     const redStar = document.createElement("i");
-    redStar.className = "fas fa-circle-exclamation";
+    redStar.className = "fas fa-star";
     redStar.style.color = "var(--red-star)";
     redStar.setAttribute("aria-label", "Red star");
     visualStarChart.appendChild(redStar);
