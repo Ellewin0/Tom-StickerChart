@@ -12,22 +12,19 @@ messagingSenderId: "639564337276",
 appId: "1:639564337276:web:d8bee0a7206ecefdd7b9f9"
 };
 
-// --- STEP 2: APP LOGIC ---
-
-document.addEventListener("DOMContentLoaded", () => {
-console.log("SP25 chart app loaded.");
-
-```
+// --- STEP 2: INITIALISE FIREBASE ---
 firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
 const pointsRef = database.ref("tomPoints");
 
+// --- STEP 3: POINT SETTINGS ---
 const POINT_MODIFIERS = {
-    gold: 10,
-    red: -10
+gold: 10,
+red: -10
 };
 
+// --- STEP 4: HTML ELEMENTS ---
 const currentPointsDisplay = document.getElementById("currentPoints");
 const goldCountDisplay = document.getElementById("goldCount");
 const redCountDisplay = document.getElementById("redCount");
@@ -38,193 +35,206 @@ const addRedButton = document.getElementById("addRed");
 const refreshButton = document.getElementById("refreshBtn");
 const masterResetButton = document.getElementById("masterResetBtn");
 
-if (!currentPointsDisplay || !goldCountDisplay || !redCountDisplay || !visualStarChart) {
-    console.error("One or more display elements are missing from index.html.");
-    return;
-}
-
-if (!addGoldButton || !addRedButton || !refreshButton || !masterResetButton) {
-    console.error("One or more buttons are missing from index.html.");
-    return;
-}
-
+// --- STEP 5: LOCAL STATE ---
 let localPointsState = {
-    totalPoints: 0,
-    goldStars: 0,
-    redStars: 0
+totalPoints: 0,
+goldStars: 0,
+redStars: 0
 };
 
+// --- STEP 6: LOAD AND SYNC POINTS FROM FIREBASE ---
 pointsRef.on(
-    "value",
-    (snapshot) => {
-        const data = snapshot.val();
+"value",
+function (snapshot) {
+const data = snapshot.val();
 
-        if (data) {
-            localPointsState = {
-                totalPoints: Number(data.totalPoints) || 0,
-                goldStars: Number(data.goldStars) || 0,
-                redStars: Number(data.redStars) || 0
-            };
-        } else {
-            pointsRef.set(localPointsState);
-        }
-
-        updateUI(localPointsState);
-    },
-    (error) => {
-        console.error("Firebase read failed:", error);
-        alert("The chart could not load from Firebase. Check your database rules.");
+```
+    if (data) {
+        localPointsState = {
+            totalPoints: Number(data.totalPoints) || 0,
+            goldStars: Number(data.goldStars) || 0,
+            redStars: Number(data.redStars) || 0
+        };
+    } else {
+        pointsRef.set(localPointsState);
     }
+
+    updateUI(localPointsState);
+},
+function (error) {
+    console.error("Firebase read failed:", error);
+    alert("The chart could not load from Firebase. Check your database rules.");
+}
+```
+
 );
 
-addGoldButton.addEventListener("click", () => {
-    console.log("Gold star clicked.");
-    modifyPoints("gold");
+// --- STEP 7: BUTTON ACTIONS ---
+addGoldButton.addEventListener("click", function () {
+console.log("Gold star clicked.");
+modifyPoints("gold");
 });
 
-addRedButton.addEventListener("click", () => {
-    console.log("Red star clicked.");
-    modifyPoints("red");
+addRedButton.addEventListener("click", function () {
+console.log("Red star clicked.");
+modifyPoints("red");
 });
 
-refreshButton.addEventListener("click", () => {
-    location.reload();
+refreshButton.addEventListener("click", function () {
+location.reload();
 });
 
-masterResetButton.addEventListener("click", () => {
-    const firstConfirm = confirm(
-        "Master Reset: this will clear Tom's points, gold stars, red stars, and formal compliance history. Continue?"
-    );
+masterResetButton.addEventListener("click", function () {
+const firstConfirm = confirm(
+"Master Reset: this will clear Tom's points, gold stars, red stars, and formal compliance history. Continue?"
+);
 
-    if (!firstConfirm) return;
+if (!firstConfirm) {
+    return;
+}
 
-    const secondConfirm = confirm(
-        "Final confirmation: should the chart return to zero?"
-    );
+const secondConfirm = confirm(
+    "Final confirmation: should the chart return to zero?"
+);
 
-    if (!secondConfirm) return;
+if (!secondConfirm) {
+    return;
+}
 
-    pointsRef
-        .set({
-            totalPoints: 0,
-            goldStars: 0,
-            redStars: 0
-        })
-        .then(() => {
-            location.reload();
-        })
-        .catch((error) => {
-            alert("The chart could not be reset. Please check Firebase permissions.");
-            console.error("Master reset failed:", error);
-        });
-});
-
-document.querySelectorAll(".trade-btn").forEach((btn) => {
-    btn.addEventListener("click", (event) => {
-        const cost = parseInt(event.currentTarget.dataset.cost, 10);
-
-        if (localPointsState.totalPoints >= cost) {
-            const confirmed = confirm(
-                "Do you want to cash in " + cost + " points for this reward? Manager approval still applies."
-            );
-
-            if (confirmed) {
-                pointsRef
-                    .update({
-                        totalPoints: localPointsState.totalPoints - cost
-                    })
-                    .catch((error) => {
-                        alert("The points could not be traded. Please check Firebase permissions.");
-                        console.error("Trade failed:", error);
-                    });
-            }
-        }
+pointsRef
+    .set({
+        totalPoints: 0,
+        goldStars: 0,
+        redStars: 0
+    })
+    .then(function () {
+        location.reload();
+    })
+    .catch(function (error) {
+        alert("The chart could not be reset. Please check Firebase permissions.");
+        console.error("Master reset failed:", error);
     });
+
 });
 
+// --- STEP 8: TRADE REWARD BUTTONS ---
+document.querySelectorAll(".trade-btn").forEach(function (btn) {
+btn.addEventListener("click", function (event) {
+const cost = parseInt(event.currentTarget.dataset.cost, 10);
+
+    if (localPointsState.totalPoints >= cost) {
+        const confirmed = confirm(
+            "Do you want to cash in " + cost + " points for this reward? Manager approval still applies."
+        );
+
+        if (confirmed) {
+            pointsRef
+                .update({
+                    totalPoints: localPointsState.totalPoints - cost
+                })
+                .catch(function (error) {
+                    alert("The points could not be traded. Please check Firebase permissions.");
+                    console.error("Trade failed:", error);
+                });
+        }
+    }
+});
+
+});
+
+// --- STEP 9: MODIFY POINTS ---
 function modifyPoints(type) {
-    const change = POINT_MODIFIERS[type];
+const change = POINT_MODIFIERS[type];
 
-    const newState = {
-        totalPoints: localPointsState.totalPoints + change,
-        goldStars: localPointsState.goldStars + (type === "gold" ? 1 : 0),
-        redStars: localPointsState.redStars + (type === "red" ? 1 : 0)
-    };
+const newState = {
+    totalPoints: localPointsState.totalPoints + change,
+    goldStars: localPointsState.goldStars + (type === "gold" ? 1 : 0),
+    redStars: localPointsState.redStars + (type === "red" ? 1 : 0)
+};
 
-    pointsRef
-        .update(newState)
-        .then(() => {
-            console.log(type + " star saved successfully.", newState);
-        })
-        .catch((error) => {
-            alert("The chart could not be updated. Please check Firebase permissions.");
-            console.error("Point update failed:", error);
-        });
+pointsRef
+    .update(newState)
+    .then(function () {
+        console.log(type + " star saved successfully.", newState);
+    })
+    .catch(function (error) {
+        alert("The chart could not be updated. Please check Firebase permissions.");
+        console.error("Point update failed:", error);
+    });
+
 }
 
+// --- STEP 10: UPDATE SCREEN ---
 function updateUI(state) {
-    currentPointsDisplay.innerText = state.totalPoints;
-    goldCountDisplay.innerText = state.goldStars;
-    redCountDisplay.innerText = state.redStars;
+currentPointsDisplay.innerText = state.totalPoints;
+goldCountDisplay.innerText = state.goldStars;
+redCountDisplay.innerText = state.redStars;
 
-    updateVisualStars(state);
-    updateRewardTiers(state.totalPoints);
+updateVisualStars(state);
+updateRewardTiers(state.totalPoints);
+
 }
 
+// --- STEP 11: DRAW VISUAL STARS ---
 function updateVisualStars(state) {
-    visualStarChart.innerHTML = "";
+visualStarChart.innerHTML = "";
 
-    if (state.goldStars === 0 && state.redStars === 0) {
-        visualStarChart.innerHTML = '<p class="empty-bank">No stars yet. The chart awaits judgement.</p>';
+if (state.goldStars === 0 && state.redStars === 0) {
+    visualStarChart.innerHTML = '<p class="empty-bank">No stars yet. The chart awaits judgement.</p>';
+    return;
+}
+
+for (let i = 0; i < state.goldStars; i++) {
+    const star = document.createElement("i");
+    star.className = "fas fa-star";
+    star.style.color = "var(--gold)";
+    star.setAttribute("aria-label", "Gold star");
+    visualStarChart.appendChild(star);
+}
+
+for (let i = 0; i < state.redStars; i++) {
+    const redStar = document.createElement("i");
+    redStar.className = "fas fa-circle-exclamation";
+    redStar.style.color = "var(--red-star)";
+    redStar.setAttribute("aria-label", "Red star");
+    visualStarChart.appendChild(redStar);
+}
+```
+
+}
+
+// --- STEP 12: UPDATE REWARD TIERS ---
+function updateRewardTiers(totalPoints) {
+const tiers = [
+{
+required: 50,
+className: "tier-50"
+},
+{
+required: 100,
+className: "tier-100"
+},
+{
+required: 200,
+className: "tier-200"
+}
+];
+
+```
+tiers.forEach(function (tier) {
+    const rewardElement = document.querySelector(".reward." + tier.className);
+
+    if (!rewardElement) {
         return;
     }
 
-    for (let i = 0; i < state.goldStars; i++) {
-        const star = document.createElement("i");
-        star.className = "fas fa-star";
-        star.style.color = "var(--gold)";
-        star.setAttribute("aria-label", "Gold star");
-        visualStarChart.appendChild(star);
+    if (totalPoints >= tier.required) {
+        rewardElement.classList.remove("locked");
+        rewardElement.classList.add("unlocked");
+    } else {
+        rewardElement.classList.remove("unlocked");
+        rewardElement.classList.add("locked");
     }
-
-    for (let i = 0; i < state.redStars; i++) {
-        const redStar = document.createElement("i");
-        redStar.className = "fas fa-circle-exclamation";
-        redStar.style.color = "var(--red-star)";
-        redStar.setAttribute("aria-label", "Red star");
-        visualStarChart.appendChild(redStar);
-    }
-}
-
-function updateRewardTiers(totalPoints) {
-    const tiers = [
-        {
-            required: 50,
-            className: "tier-50"
-        },
-        {
-            required: 100,
-            className: "tier-100"
-        },
-        {
-            required: 200,
-            className: "tier-200"
-        }
-    ];
-
-    tiers.forEach((tier) => {
-        const rewardElement = document.querySelector(".reward." + tier.className);
-
-        if (!rewardElement) return;
-
-        if (totalPoints >= tier.required) {
-            rewardElement.classList.remove("locked");
-            rewardElement.classList.add("unlocked");
-        } else {
-            rewardElement.classList.remove("unlocked");
-            rewardElement.classList.add("locked");
-        }
-    });
-}
-
 });
+
+}
