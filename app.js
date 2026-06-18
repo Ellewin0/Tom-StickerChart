@@ -235,17 +235,16 @@ tiers.forEach(function (tier) {
 }
 
 // --- STEP 13: CREATE AND DOWNLOAD REWARD TOKEN ---
+// --- STEP 13: CREATE AND DOWNLOAD REWARD TOKEN ---
 function downloadRewardToken(rewardTitle, cost, remainingPoints) {
 const canvas = document.createElement("canvas");
 const width = 1200;
 const height = 800;
-const scale = window.devicePixelRatio || 1;
 
-canvas.width = width * scale;
-canvas.height = height * scale;
+canvas.width = width;
+canvas.height = height;
 
 const ctx = canvas.getContext("2d");
-ctx.scale(scale, scale);
 
 const issuedAt = new Date().toLocaleString("en-AU", {
     day: "2-digit",
@@ -258,42 +257,47 @@ const issuedAt = new Date().toLocaleString("en-AU", {
 ctx.fillStyle = "#f3f7ee";
 ctx.fillRect(0, 0, width, height);
 
-drawRoundedRect(ctx, 55, 55, width - 110, height - 110, 34, "#fffaf0");
+drawRoundedRect(ctx, 55, 55, width - 110, height - 110, 36, "#fffaf0");
 drawRoundedRect(ctx, 95, 95, width - 190, height - 190, 28, "#ffffff");
 
 ctx.textAlign = "center";
+
 ctx.fillStyle = "#607d5f";
 ctx.font = "900 26px Arial";
 ctx.fillText("BANTER COMPLIANCE DIVISION", width / 2, 150);
 
 ctx.fillStyle = "#243238";
-ctx.font = "900 64px Arial";
-ctx.fillText("REWARD TOKEN", width / 2, 235);
-
-ctx.font = "900 44px Arial";
-ctx.fillText("Tom's Sticker Chart", width / 2, 305);
-
-ctx.fillStyle = "#6c5ce7";
-ctx.font = "900 50px Arial";
-wrapCenteredText(ctx, rewardTitle, width / 2, 395, 900, 56);
+ctx.font = "900 60px Arial";
+ctx.fillText("REWARD TOKEN", width / 2, 230);
 
 ctx.fillStyle = "#344044";
-ctx.font = "700 30px Arial";
-ctx.fillText("Redeemed for " + cost + " points", width / 2, 520);
+ctx.font = "900 38px Arial";
+ctx.fillText("Tom's Sticker Chart", width / 2, 295);
+
+ctx.fillStyle = "#6c5ce7";
+ctx.font = "900 48px Arial";
+wrapCenteredText(ctx, rewardTitle, width / 2, 390, 850, 56);
+
+drawRoundedRect(ctx, 285, 485, 630, 72, 999, "#eadff8");
+
+ctx.fillStyle = "#6c5ce7";
+ctx.font = "900 30px Arial";
+ctx.fillText("Redeemed for " + cost + " points", width / 2, 532);
 
 ctx.fillStyle = "#66767a";
 ctx.font = "700 24px Arial";
-ctx.fillText("Remaining points after trade: " + remainingPoints, width / 2, 570);
-ctx.fillText("Issued: " + issuedAt, width / 2, 615);
+ctx.fillText("Remaining points after trade: " + remainingPoints, width / 2, 600);
+ctx.fillText("Issued: " + issuedAt, width / 2, 640);
 
-drawRoundedRect(ctx, 330, 660, 540, 55, 999, "#d8f3e5");
+drawRoundedRect(ctx, 310, 680, 580, 56, 999, "#d8f3e5");
 
 ctx.fillStyle = "#3f7d5f";
-ctx.font = "900 24px Arial";
-ctx.fillText("Car privileges pending Manager approval", width / 2, 696);
+ctx.font = "900 23px Arial";
+ctx.fillText("Car privileges pending Manager approval", width / 2, 716);
 
-ctx.font = "42px Arial";
-ctx.fillText("🚗 🏁 🥖", width / 2, 760);
+drawMiniCar(ctx, 430, 735);
+drawMiniFlag(ctx, 565, 727);
+drawBanhMiLabel(ctx, 665, 728);
 
 const fileName = "toms-sticker-chart-" + makeSafeFileName(rewardTitle) + "-token.png";
 const link = document.createElement("a");
@@ -320,6 +324,68 @@ ctx.quadraticCurveTo(x, y, x + radius, y);
 ctx.closePath();
 ctx.fillStyle = color;
 ctx.fill();
+}
+
+function drawMiniCar(ctx, x, y) {
+ctx.fillStyle = "#6c5ce7";
+drawRoundedRect(ctx, x, y, 82, 30, 8, "#6c5ce7");
+
+ctx.fillStyle = "#3578a6";
+drawRoundedRect(ctx, x + 18, y - 20, 42, 24, 6, "#3578a6");
+
+ctx.fillStyle = "#ffffff";
+drawRoundedRect(ctx, x + 25, y - 15, 13, 12, 3, "#ffffff");
+drawRoundedRect(ctx, x + 42, y - 15, 13, 12, 3, "#ffffff");
+
+ctx.fillStyle = "#243238";
+ctx.beginPath();
+ctx.arc(x + 18, y + 31, 9, 0, Math.PI * 2);
+ctx.fill();
+
+ctx.beginPath();
+ctx.arc(x + 64, y + 31, 9, 0, Math.PI * 2);
+ctx.fill();
+
+ctx.fillStyle = "#ffffff";
+ctx.beginPath();
+ctx.arc(x + 18, y + 31, 4, 0, Math.PI * 2);
+ctx.fill();
+
+ctx.beginPath();
+ctx.arc(x + 64, y + 31, 4, 0, Math.PI * 2);
+ctx.fill();
+
+}
+
+function drawMiniFlag(ctx, x, y) {
+ctx.fillStyle = "#344044";
+ctx.fillRect(x, y, 5, 58);
+
+const square = 12;
+const startX = x + 8;
+const startY = y;
+
+for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 5; col++) {
+        ctx.fillStyle = (row + col) % 2 === 0 ? "#243238" : "#ffffff";
+        ctx.fillRect(startX + col * square, startY + row * square, square, square);
+    }
+}
+
+ctx.strokeStyle = "#243238";
+ctx.lineWidth = 2;
+ctx.strokeRect(startX, startY, square * 5, square * 4);
+
+}
+
+function drawBanhMiLabel(ctx, x, y) {
+drawRoundedRect(ctx, x, y, 150, 50, 999, "#fff1c7");
+
+ctx.fillStyle = "#7a5200";
+ctx.font = "900 20px Arial";
+ctx.textAlign = "center";
+ctx.fillText("banh mi", x + 75, y + 32);
+
 }
 
 function wrapCenteredText(ctx, text, x, y, maxWidth, lineHeight) {
