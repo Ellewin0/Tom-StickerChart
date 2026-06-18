@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-agent=no">
+    <title>THE SP25 ACCESS CHART (OMK EDITION)</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <i class="fas fa-motorcycle logo"></i>
+            <h1>THE OFFICIAL SP25 ACCESS CHART</h1>
+            <p class="subtitle">Banter Compliance Division</p>
+        </header>
+
+        <section class="points-card">
+            <div class="tally">
+                <span class="points-label">TOM'S SP25 ACCESS POINTS:</span>
+                <span id="currentPoints" class="points-number">0</span>
+            </div>
+            <div class="stars-display">
+                <div id="goldStarsTally" class="star-counter gold"><i class="fas fa-star"></i> <span id="goldCount">0</span></div>
+                <div id="redStarsTally" class="star-counter red"><i class="fas fa-circle-exclamation"></i> <span id="redCount">0</span></div>
+            </div>
+        </section>
+
+        <section class="control-panel">
+            <h2>MANAGER ACTIONS</h2>
+            <div class="controls-grid">
+                <button id="addGold" class="btn good-action">
+                    <i class="fas fa-star star-add"></i> AWARD GOLD STAR
+                    <span class="modifier">+10 Points</span>
+                </button>
+                <button id="addRed" class="btn bad-action">
+                    <i class="fas fa-circle-exclamation star-deduct"></i> ASSIGN RED STAR
+                    <span class="modifier">-10 Points</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="rules-box">
+            <h2>THE STICKER RULES</h2>
+            <div class="rules-grid">
+                <div class="rule good">
+                    <i class="fas fa-handshake"></i>
+                    <h3>GOLD STAR: (Good Things)</h3>
+                    <p>Witty comebacks, actual date planned, helping stray dogs in Vietnam, showing up with good snacks.</p>
+                </div>
+                <div class="rule bad">
+                    <i class="fas fa-stopwatch"></i>
+                    <h3>RED STAR: (Bad Things)</h3>
+                    <p>Taking 5 hours to reply to a 3-word text, unearned cockiness, forgetting my order.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="rewards-section">
+            <h2>SP25 USAGE REWARDS</h2>
+            <div id="rewardsList" class="rewards-grid">
+                <div class="reward tier-50 locked">
+                    <i class="fas fa-car-side"></i>
+                    <h3>30-min Supervised Joyride</h3>
+                    <p>Unlock at 50 pts</p>
+                    <span class="tier-mark">TIER 1</span>
+                </div>
+                <div class="reward tier-100 locked">
+                    <i class="fas fa-car"></i>
+                    <h3>Half-Day Rental</h3>
+                    <p>Unlock at 100 pts</p>
+                    <span class="tier-mark">TIER 2</span>
+                </div>
+                <div class="reward tier-200 locked">
+                    <i class="fas fa-globe-asia"></i>
+                    <h3>Full Weekend Privileges</h3>
+                    <p>Unlock at 200 pts</p>
+                    <span class="tier-mark">TIER 3</span>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>System Manager: You | Subordinate Manager: Tom (Beta)</p>
+            <p>Aesthetic Compliance provided by Purple, Green, Blue Theme.</p>
+        </footer>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
